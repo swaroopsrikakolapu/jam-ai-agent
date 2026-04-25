@@ -295,6 +295,109 @@
             nav { padding: 20px; }
             main { padding-top: 120px; }
         }
+        /* Chat Widget */
+        .chat-widget {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 350px;
+            height: 500px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeInUp 0.5s ease forwards;
+            animation-delay: 1.5s;
+        }
+
+        .chat-header {
+            padding: 16px 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .chat-message {
+            padding: 12px 16px;
+            border-radius: 12px;
+            max-width: 85%;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        .chat-message.bot {
+            background: var(--surface-light);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-message.user {
+            background: var(--primary);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-input-container {
+            padding: 16px;
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .chat-input {
+            flex: 1;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .chat-input:focus {
+            border-color: var(--primary);
+        }
+
+        .chat-send {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0 16px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .chat-send:hover {
+            background: var(--secondary);
+        }
     </style>
 </head>
 <body>
@@ -351,7 +454,7 @@
                 <div class="module-icon">🤖</div>
                 <h3>AI Chatbot</h3>
                 <p>Claude-powered assistant for 24/7 doubt resolution, concept explanations, and personalized study strategies.</p>
-                <a href="/api/chatbot/chat" target="_blank" class="api-link">GET /api/chatbot/chat ↗</a>
+                <a href="#" class="api-link">POST /api/chatbot/chat ↗</a>
             </div>
         </div>
     </main>
@@ -378,6 +481,73 @@
                     statusEl.style.color = "#EF4444"; // red
                 });
         }
+        async function sendMessage() {
+            const inputEl = document.getElementById('chat-input');
+            const message = inputEl.value.trim();
+            if (!message) return;
+
+            // Clear input
+            inputEl.value = '';
+
+            const messagesEl = document.getElementById('chat-messages');
+            
+            // Append user message
+            const userDiv = document.createElement('div');
+            userDiv.className = 'chat-message user';
+            userDiv.textContent = message;
+            messagesEl.appendChild(userDiv);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+
+            // Add thinking indicator
+            const botDiv = document.createElement('div');
+            botDiv.className = 'chat-message bot';
+            botDiv.textContent = 'Thinking...';
+            botDiv.style.opacity = '0.5';
+            messagesEl.appendChild(botDiv);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+
+            try {
+                const response = await fetch('/api/chatbot/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: message })
+                });
+
+                if (!response.ok) throw new Error('API Error');
+
+                const data = await response.json();
+                botDiv.textContent = data.response;
+                botDiv.style.opacity = '1';
+                
+            } catch (error) {
+                botDiv.textContent = 'Sorry, I am having trouble connecting to my knowledge base right now.';
+                botDiv.style.color = '#EF4444';
+                botDiv.style.opacity = '1';
+            }
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
     </script>
+    
+    <!-- Chat Widget -->
+    <div class="chat-widget">
+        <div class="chat-header">
+            🤖 JAM AI Agent
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <div class="chat-message bot">
+                Welcome! I'm your JAM Chemistry 2027 AI Agent. Ask me anything about Chemistry or exam strategies!
+            </div>
+        </div>
+        <div class="chat-input-container">
+            <input type="text" class="chat-input" id="chat-input" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
+            <button class="chat-send" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
 </body>
 </html>

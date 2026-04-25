@@ -1,6 +1,11 @@
 package com.antigravity.jamagent.modules.chatbot;
 
-import org.springframework.web.bind.annotation.GetMapping;
+import com.antigravity.jamagent.dto.ChatRequestDto;
+import com.antigravity.jamagent.dto.ChatResponseDto;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -8,8 +13,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/chatbot")
 public class ChatbotController {
 
-    @GetMapping("/chat")
-    public String chat() {
-        return "Chatbot Engine Stub";
+    @Autowired
+    private ClaudeApiService claudeApiService;
+
+    @PostMapping("/chat")
+    public ResponseEntity<ChatResponseDto> chat(@RequestBody ChatRequestDto request) {
+        if (request.getMessage() == null || request.getMessage().trim().isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        
+        ChatResponseDto response = claudeApiService.getAnswer(request);
+        return ResponseEntity.ok(response);
     }
 }
