@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: jam-ai-agent
+  
+  datasource:
+    url: jdbc:h2:mem:jamdb
+    username: sa
+    password: 
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+
+server:
+  port: 8085
+
+ai:
+  claude:
+    api-key: ${CLAUDE_API_KEY:placeholder_key}

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JAM Chemistry 2027 | AI Agent</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #050505;
+            --surface-color: #111111;
+            --surface-light: #1A1A1A;
+            --primary: #6366F1;
+            --secondary: #A855F7;
+            --accent: #EC4899;
+            --text-main: #FFFFFF;
+            --text-muted: #A1A1AA;
+            --border-color: #27272A;
+            --glass-bg: rgba(17, 17, 17, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.15) 0%, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        /* Nav */
+        nav {
+            padding: 24px 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            background: var(--glass-bg);
+            border-bottom: 1px solid var(--glass-border);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--text-main), var(--text-muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+        }
+
+        /* Hero */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 160px 24px 80px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .badge {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #818CF8;
+            margin-bottom: 24px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 4.5rem;
+            line-height: 1.1;
+            text-align: center;
+            margin-bottom: 24px;
+            letter-spacing: -0.03em;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% 200%;
+            animation: gradientMove 5s ease infinite;
+        }
+
+        p.subtitle {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            text-align: center;
+            max-width: 600px;
+            margin-bottom: 48px;
+            line-height: 1.6;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .actions {
+            display: flex;
+            gap: 16px;
+            animation: fadeInUp 1.2s ease-out;
+        }
+
+        .btn {
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            box-shadow: 0 4px 24px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-outline {
+            background: var(--surface-color);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-outline:hover {
+            background: var(--surface-light);
+            border-color: var(--text-muted);
+            transform: translateY(-2px);
+        }
+
+        /* Modules Grid */
+        .modules {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 80px;
+            width: 100%;
+            animation: fadeInUp 1.4s ease-out;
+        }
+
+        .module-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 32px;
+            border-radius: 20px;
+            backdrop-filter: blur(12px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.05), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .module-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(99, 102, 241, 0.4);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .module-card:hover::before {
+            opacity: 1;
+        }
+
+        .module-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--surface-light);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .module-card:hover .module-icon {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-color: transparent;
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .module-card h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+        }
+
+        .module-card p {
+            color: var(--text-muted);
+            line-height: 1.5;
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+        }
+        
+        .api-link {
+            font-size: 0.85rem;
+            color: var(--secondary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+        }
+
+        .api-link:hover {
+            color: #D8B4FE;
+            text-decoration: underline;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 3rem; }
+            nav { padding: 20px; }
+            main { padding-top: 120px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">
+            <div class="logo-icon">⚗️</div>
+            Anti-Gravity
+        </div>
+        <div>
+            <a href="https://github.com/antigravity" class="btn btn-outline" style="padding: 10px 20px; font-size: 0.9rem;">Documentation</a>
+        </div>
+    </nav>
+
+    <main>
+        <div class="badge">Platform Initialized</div>
+        <h1>JAM Chemistry 2027<br><span class="gradient-text">AI Agent System</span></h1>
+        <p class="subtitle">Your ultimate AI-powered study companion. Daily topics, adaptive mock tests, placement readiness, and real-time doubt solving.</p>
+
+        <div class="actions">
+            <a href="#modules" class="btn btn-primary">Explore Modules →</a>
+            <a href="#" class="btn btn-outline" onclick="testConnection()">Test Connection</a>
+        </div>
+
+        <div id="connection-status" style="margin-top: 20px; color: var(--secondary); font-size: 0.9rem; font-weight: 600; height: 20px;"></div>
+
+        <div class="modules" id="modules">
+            <!-- Module 1 -->
+            <div class="module-card">
+                <div class="module-icon">📚</div>
+                <h3>Daily Topic Engine</h3>
+                <p>Curated chemical compound profiles, properties, and essential formulas delivered to you every morning.</p>
+                <a href="/api/topic/daily" target="_blank" class="api-link">GET /api/topic/daily ↗</a>
+            </div>
+
+            <!-- Module 2 -->
+            <div class="module-card">
+                <div class="module-icon">🎯</div>
+                <h3>Exam Training</h3>
+                <p>Adaptive mock tests utilizing Item Response Theory (IRT) with real-time analytics to boost your JAM rank.</p>
+                <a href="/api/exam/mock" target="_blank" class="api-link">GET /api/exam/mock ↗</a>
+            </div>
+
+            <!-- Module 3 -->
+            <div class="module-card">
+                <div class="module-icon">💼</div>
+                <h3>CRT & Placement</h3>
+                <p>Aptitude preparation and vocabulary builder specifically designed for chemistry and software sector interviews.</p>
+                <a href="/api/crt/aptitude" target="_blank" class="api-link">GET /api/crt/aptitude ↗</a>
+            </div>
+
+            <!-- Module 4 -->
+            <div class="module-card">
+                <div class="module-icon">🤖</div>
+                <h3>AI Chatbot</h3>
+                <p>Claude-powered assistant for 24/7 doubt resolution, concept explanations, and personalized study strategies.</p>
+                <a href="/api/chatbot/chat" target="_blank" class="api-link">GET /api/chatbot/chat ↗</a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function testConnection() {
+            const statusEl = document.getElementById('connection-status');
+            statusEl.textContent = "Pinging API...";
+            statusEl.style.color = "var(--text-muted)";
+            
+            fetch('/api/topic/daily')
+                .then(response => {
+                    if (response.ok) {
+                        return response.text();
+                    }
+                    throw new Error('Network response was not ok');
+                })
+                .then(data => {
+                    statusEl.textContent = `Success: Backend responded with "${data}"`;
+                    statusEl.style.color = "#34D399"; // green
+                })
+                .catch(error => {
+                    statusEl.textContent = "Error: Backend is unreachable or returned an error.";
+                    statusEl.style.color = "#EF4444"; // red
+                });
+        }
+    </script>
+</body>
+</html>
